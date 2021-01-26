@@ -29,7 +29,7 @@
     <!-- <div class="active item" id="top-item">Suporte</div> -->
     <a href="https://aberturasimples.com.br/central-de-ajuda/" target="_blank" class="active item" id="top-item">Central de Ajuda</a>
     <div name="privilegio2" class="ui divider"></div>
-    <a href="#" target="_blank" class="active item" id="top-item">Atualizar Leads</a>
+    <a href="manutencao.php" class="active item" id="top-item">Manutenção</a>
     <!-- <a href="https://aberturasimples.com.br/central-de-ajuda/#contato" target="_blank" class="item" id="menu-item">Contato</a> -->
     <div class="ui divider"></div>
   </div>
