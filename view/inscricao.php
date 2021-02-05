@@ -126,7 +126,7 @@
       </form>     
     </div>
     <div class="footer">
-        <a href="https://aberturasimples.com.br" target="_blank">Abertura Simples</a> - Todos os direitos Reservados © 2019
+        <a href="https://aberturasimples.com.br" target="_blank">Abertura Simples</a> - Todos os direitos Reservados © 2021
   </div>
 </body>
 

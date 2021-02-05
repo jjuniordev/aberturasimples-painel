@@ -152,10 +152,9 @@
 					$('#loader').show();
 				},
 				success: function(retorno) {
-					setTimeout(function(){
-						location.reload();
-					},1000);
-					
+					// setTimeout(function(){
+					// 	location.reload();
+					// },1000);
 				}
 		});
 	});
