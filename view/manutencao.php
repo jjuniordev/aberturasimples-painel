@@ -70,8 +70,6 @@ $('#btn-corrigir-leads').click(() => {
       $('#example4').progress('increment');
     },
     success: (data) => {
-      console.log(data);
-      debugger;
       if (!data['success']) {
         $('#example4').progress('set error');
         $('#example4').progress('set label', 'Erro ao normalizar leads, refaça a operação');

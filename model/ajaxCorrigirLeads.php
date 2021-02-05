@@ -6,36 +6,45 @@
     include 'seguranca.php';
     include 'funcoes.php';
 
-    $sql = "SELECT
-                id_ultima_conversao,
-                COUNT(id_ultima_conversao) AS qtd
-            FROM tb_leads
-            WHERE id_ultima_conversao > 0
-            GROUP BY id_ultima_conversao
-            HAVING qtd > 1
-            ORDER BY 2 DESC";
+    $sql = "SELECT 
+                id, 
+                count(id) AS somaId
+            FROM 
+                tb_leads 
+            WHERE id_ultima_conversao = 0 
+            GROUP BY id";
 
     $query = mysql_query($sql);
 
-    if (mysql_num_rows($query) == 0) {
-        echo json_encode(array("success" => true, "data" => ''));
+    if (mysql_num_rows($query) == 0) 
+    {
+        echo json_encode(
+            array(
+                "success" => true, 
+                "data" => ''
+            )
+        );
         return;
     }
+
+    $arrLeadSemConversao = '';
     
     while ($result = mysql_fetch_array($query)) {
-        $arrUltimaConversao[] = $result;
+        $arrLeadSemConversao .= $result['id'];
+        $arrLeadSemConversao .= ',';
     }
 
-    foreach ($arrUltimaConversao as $ultimaConversao) {
-        $id_ultima_conversao[] = $ultimaConversao['id_ultima_conversao'];
-    }
+    $arrLeadSemConversao .= '0';
 
-    echo json_encode($id_ultima_conversao);
+    mysql_query("DELETE FROM tb_leads WHERE id IN ($arrLeadSemConversao)");
 
-    // $sql = "SELECT id FROM tb_leads WHERE ";
-
-    // echo json_encode(array("success" => true, "data" => $id_ultima_conversao));
+    $return = array(
+        'success' => true
+    );
 
 
+    echo json_encode($return);
+
+    
 
 ?>

@@ -288,7 +288,7 @@
       // utilize o valor aqui, adicionei ao array para exemplo
       values.push(pacote[i].value);
     }
-      msg = confirm('Deletar os Usuários ' + values + '?');
+      msg = confirm('Deletar as Unidades ' + values + '?');
       if (msg == true) {
         $.ajax({
           url: '../model/ajaxDeletarUnidade.php',
@@ -305,10 +305,16 @@
                 setTimeout(function(){
                     $('#del-unidade').removeClass('disabled loading');
                     $(window).attr('location','pendentes.php');
-                },1500);
+                },2000);
+            },
+            error: function (request, status, error) {
+                msg = confirm('Não foi possível completar a sua ação, tente novamente.');
+                if (msg) {
+                  location.reload();
+                }
             }
         });
-      location.reload();
+      // location.reload();
     } 
    } 
    

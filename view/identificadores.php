@@ -3,6 +3,8 @@
 	$id_user = $_SESSION['usuarioID'];
 	$unidade_id = $_SESSION['usuarioUnidade'];
 	$permissao = verificarPermissao($id_user);	
+
+  echo '<script>var unidade_id = '.$unidade_id.';</script>';
 ?>
 <!-- GAMBIARRA DO FILTRO DE DATA INICIAL E FINAL -->
  <style type="text/css">
@@ -176,6 +178,7 @@
         data: {
           'ini': ini,
           'fim': fim,
+          'unidade_id': unidade_id
         },
           success: function(retorno) {
             $('#tabela_unidades').remove();

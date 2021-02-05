@@ -940,7 +940,7 @@ function dispararEmail($to_email,$id_lead) {
                         <tr>
                             <td width="600" height="78" style="text-align: center; color: #757575; font-size: 14px">
                                 Enviado por <a href="http://www.aberturasimples.com.br/" target="_blank">Abertura Simples</a><br>
-                                <small>© Abertura Simples 2019 - Todos os direitos Reservados.</small>
+                                <small>© Abertura Simples 2021 - Todos os direitos Reservados.</small>
                             </td>
                         </tr>
                         <tr>
