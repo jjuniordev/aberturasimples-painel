@@ -4,6 +4,7 @@
 	
 	$ini = $_POST['ini'];
   	$fim = $_POST['fim'];
+    $unidade_id = $_POST['unidade_id'];
 
   	$query = mysql_query("SELECT DISTINCT
                                 a.identificador, COUNT(a.id) as quantidade
@@ -13,6 +14,7 @@
                                 tb_leads b
                             ON a.id_lead = b.id
                             WHERE str_to_date(a.data_conversao,'%Y-%m-%d') between str_to_date('$ini','%d/%m/%Y') AND str_to_date('$fim','%d/%m/%Y')
+                            AND b.id_unidade = $unidade_id
                             GROUP BY a.identificador
                             ORDER BY 2 DESC
 							    ;");

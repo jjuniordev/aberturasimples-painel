@@ -16,4 +16,6 @@
 
 	$retorno = mysql_info();
 
+	echo $retorno;
+
 ?>
