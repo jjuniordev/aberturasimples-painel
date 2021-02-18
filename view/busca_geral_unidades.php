@@ -20,8 +20,6 @@
 					Cidade like '%".$cursos."%' AND esta_ativo = 1
 				OR
 					Estado like '%".$cursos."%' AND esta_ativo = 1
-				OR 
-					google_id like '%".$cursos."%' AND esta_ativo = 1
 				;";
 	$resultado_cursos = mysql_query($cursos);
 	
@@ -32,20 +30,24 @@
 	$pesquisa .= "<th>Nome</th>";
 	$pesquisa .= "<th>Cidade</th>";
 	$pesquisa .= "<th>Estado</th>";
-	$pesquisa .= "<th>Google ID</th>";
+	$pesquisa .= "<th>Campanha</th>";
 	$pesquisa .= "</thead>";
 
 	if(mysql_num_rows($resultado_cursos) <= 0){
 		echo "Nenhum dado encontrado...";
 	}else{
 		while($rows = mysql_fetch_assoc($resultado_cursos)){
-			//echo "<li>".utf8_encode($rows['nome'])."</li>";
+			if ($rows['google_id'] == 1) {
+				$status = '<a class="ui green empty circular label"></a>';
+			} else {
+				$status = '<a class="ui grey empty circular label"></a>';
+			}
 			$pesquisa .= "<tr>";
 			$pesquisa .= "<td><div class='ui checkbox'><input class='input_busca' value='".$rows['id']."' name='Pacote' type='checkbox'><label></label></div></td> ";
 			$pesquisa .= "<td name='nome_unidade' id='".$rows['id']."' class='unidadeEditavel'>".utf8_encode($rows['nome_unidade'])."</td>";
 			$pesquisa .= "<td>".utf8_encode($rows['Cidade'])."</td>";
 			$pesquisa .= "<td>".utf8_encode($rows['Estado'])."</td>";
-			$pesquisa .= "<td name='google_id' id='".$rows['id']."' class='unidadeEditavel'>".$rows['google_id']."</td>";
+			$pesquisa .= "<td name='google_id' id='".$rows['id']."' class=''>".$status."</td>";
 			$pesquisa .= "</tr>";
 		}
 	}
@@ -57,8 +59,12 @@
 			        $('[name=Pacote]').click(function(){
 			            if($('[name=Pacote]').is(':checked')) {
 			                $('#del-unidade').removeClass('disabled');
+							$('#inativar-campanha').removeClass('disabled');
+							$('#ativar-campanha').removeClass('disabled');
 			            } else {
 			                $('#del-unidade').addClass('disabled');
+							$('#inativar-campanha').addClass('disabled');
+							$('#ativar-campanha').addClass('disabled');
 			            }
 			        });
 			        duploCliqueUnid();
@@ -68,9 +74,13 @@
 		  if ( $(this).is(':checked') ){
 		    $('.input_busca:checkbox').prop('checked', true);
 		    $('#del-unidade').removeClass('disabled');
+			$('#inativar-campanha').removeClass('disabled');
+			$('#ativar-campanha').removeClass('disabled');
 		  }else{
 		    $('.input_busca:checkbox').prop('checked', false);
 		    $('#del-unidade').addClass('disabled');
+			$('#inativar-campanha').addClass('disabled');
+			$('#ativar-campanha').addClass('disabled');
 		  }
 		});
         </script>
