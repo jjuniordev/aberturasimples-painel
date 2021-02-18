@@ -226,7 +226,7 @@ function dadosParciaisFatoAdm() {
                                     FROM
                                         tb_unidades
                                     WHERE
-                                        google_id NOT IN ('','--')
+                                        google_id = 1
                                     AND esta_ativo = 1");
     $sqlTaxaConversao = mysql_query("SELECT 
                                         (cli / (cli + rej)) * 100 AS taxa_conversao
