@@ -9,10 +9,10 @@
     <a href="leads_inativos.php" class="item" id="menu-item">Deletados</a>
     <a href="gerais.php" class="item" id="menu-item">Todos</a>
     <div class="ui divider"></div>
-    <div class="active item" id="top-item">Campanhas</div>
+    <!-- <div class="active item" id="top-item">Campanhas</div>
     <a href="campanhas.php" class="item" id="menu-item">Google</a>
     <a href="facebook.php" class="item" id="menu-item">Facebook</a>
-    <div class="ui divider"></div>
+    <div class="ui divider"></div> -->
     <div class="active item" id="top-item">Relatórios</div>
     <a href="leads_unidades.php" class="item" id="menu-item">Leads por Unidades</a>
     <a href="leads_enviados.php" class="item" id="menu-item">Leads Enviados</a>

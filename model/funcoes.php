@@ -164,60 +164,84 @@ function todosDadosFato($id) {
 }
 
 function dadosParciaisFato($permissao,$id) {
-    if ($permissao <= 3) {
-            $query = mysql_query("SELECT 
-                sum(a.cliques) as cliques,
-                sum(a.impressoes) as impressoes,
-                sum(a.conversoes) as conversoes,
-                round(sum(a.custo),2) as custo
-            FROM
-                tb_google_fato_ads a
-            INNER JOIN
-                tb_unidades b
-            ON
-               -- a.account_id = b.google_id
-               replace(a.account_name,'Abertura Simples - ','') = b.nome_unidade
-            WHERE   
-                a.account_name != ' -- '
-            AND
-                b.esta_ativo = 1
-            AND
-                str_to_date(a.periodo, '%Y-%m-%d') 
-                  BETWEEN DATE_SUB(NOW(), INTERVAL 31 DAY) AND NOW()
-           ;");
-        
-    } else {
+
         $query = mysql_query("
-                SELECT 
-                    a.account_name,
-                    sum(a.cliques) as cliques,
-                    sum(a.impressoes) as impressoes,
-                    sum(a.conversoes) as conversoes,
-                    round(sum(a.custo),2) as custo
-                FROM
-                    tb_google_fato_ads a
-                INNER JOIN
-                    tb_unidades b
-                ON
-                    replace(a.account_name,'Abertura Simples - ','') = b.nome_unidade
-                INNER JOIN
-                    tb_usuarios c
-                ON
-                    c.id_unidade = b.id
-                WHERE
-                    c.id = $id
-                AND
-                    str_to_date(a.periodo, '%Y-%m-%d') 
-                      BETWEEN DATE_SUB(NOW(), INTERVAL 31 DAY) AND NOW()
-                GROUP BY 
-                    a.account_name;");
+                        SELECT
+                        tls.status2,
+                        count(tl.id_status) as quantidade
+                    FROM
+                        tb_leads tl
+                    INNER JOIN
+                        tb_lead_status tls 
+                    ON tl.id_status = tls.id 
+                    WHERE
+                        tl.id_unidade = $id
+                    AND tls.id IN (4,5,6)
+                    GROUP BY 
+                        tl.id_status");
+
+    $resposta = array(
+        (object) array(
+            "status" => "",
+            "valor" => ""
+        ),
+        (object) array(
+            "status" => "",
+            "valor" => ""
+        ),
+        (object) array(
+            "status" => "",
+            "valor" => ""
+        )
+    );
+
+    $i = 0;
+
+    while ($dados = mysql_fetch_array($query)) {
+        $resposta[$i]->status = $dados['status2'];
+        $resposta[$i]->valor = $dados['quantidade'];
+
+        $i++;
     }
 
-    
+    return $resposta;
 
-    $dados = mysql_fetch_array($query);
-    return $dados;
+}
 
+function dadosParciaisFatoAdm() {
+    $sqlTotalAssociados = mysql_query("SELECT
+                                        COUNT(id) AS qtd_unidade
+                                    FROM
+                                        tb_unidades tu
+                                    WHERE
+                                        esta_ativo = 1");
+    $sqlTotalCidades = mysql_query("SELECT
+                                        COUNT(DISTINCT Cidade) AS qtd_estados
+                                    FROM
+                                        tb_unidades tu
+                                    WHERE
+                                        esta_ativo = 1");
+    $sqlTotalCampanhas = mysql_query("SELECT
+                                        COUNT(google_id) AS qtd_campanhas
+                                    FROM
+                                        tb_unidades
+                                    WHERE
+                                        google_id = 1
+                                    AND esta_ativo = 1");
+    $sqlTaxaConversao = mysql_query("SELECT 
+                                        (cli / (cli + rej)) * 100 AS taxa_conversao
+                                    FROM 
+                                        (SELECT COUNT(id) AS cli FROM tb_leads WHERE id_status IN (2,4,5) AND esta_ativo = 1) AS cli,
+                                        (SELECT COUNT(id) AS rej FROM tb_leads WHERE id_status = 6 AND esta_ativo = 1) AS rej");
+
+    $resposta = (Object) array(
+        "TotalAssociados" => $sqlTotalAssociados ? mysql_result($sqlTotalAssociados, 0) : "N/A",
+        "TotalCidades" => $sqlTotalCidades ? mysql_result($sqlTotalCidades, 0) : "N/A",
+        "TotalCampanhas" => $sqlTotalCampanhas ? mysql_result($sqlTotalCampanhas, 0) : "N/A",
+        "TaxaConversao" => $sqlTaxaConversao ? mysql_result($sqlTaxaConversao, 0) : "N/A",
+    );
+
+    return $resposta;
 }
 
 function dadosLeads($dini,$dfim) {
