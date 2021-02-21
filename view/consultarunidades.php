@@ -54,14 +54,23 @@
         $('table > tbody > tr').remove();
         var tbody = $('table > tbody');
         for (var i = pagina * tamanhoPagina; i < dados.length && i < (pagina + 1) *  tamanhoPagina; i++) {
+          if(dados[i][4] == 1) {
+            title = 'Ativo';
+            cor = '<a class="ui green empty circular label"></a>';
+          } 
+          if (dados[i][4] == 0) {
+            title = 'Inativo';
+            cor = '<a class="ui grey empty circular label"></a>';
+          }
             tbody.append(
                 $('<tr>')
                   .append($('<td class="center aligned">').append('<div class="ui checkbox"><input name="Pacote" value="'+dados[i][0]+'" type="checkbox"><label></label></div>'))
                     .append($('<td name="nome_unidade" id="'+dados[i][0]+'" class="unidadeEditavel" title="'+ dados[i][1] +'">').append(dados[i][1]))
                     .append($('<td name="cidade" id="'+dados[i][0]+'" class="unidadeEditavel" title="'+ dados[i][2] +'">').append(dados[i][2]))
                     .append($('<td name="estado" id="'+dados[i][0]+'" class="unidadeEditavel" title="'+ dados[i][3] +'">').append(dados[i][3]))
-                    .append($('<td name="google_id" id="'+dados[i][0]+'" class="unidadeEditavel" title="'+ dados[i][4] +'">').append(dados[i][4].substr(0,3)+"-"+dados[i][4].substr(3,3)+"-"+dados[i][4].substr(6,4)))
-                    .append($('<td name="nome_responsavel" id="'+dados[i][5]+'" title="'+ dados[i][5] +'">').append(dados[i][5]))
+                    // .append($('<td name="google_id" id="'+dados[i][0]+'" class="unidadeEditavel" title="'+ dados[i][4] +'">').append(dados[i][4].substr(0,3)+"-"+dados[i][4].substr(3,3)+"-"+dados[i][4].substr(6,4)))
+                    .append($('<td name="google_id" id="'+dados[i][0]+'" title="'+ title +'">').append(cor))
+                    // .append($('<td name="nome_responsavel" id="'+dados[i][5]+'" title="'+ dados[i][5] +'">').append(dados[i][5]))
             )
         }
         $('#numeracao').text('Página ' + (pagina + 1) + ' de ' + Math.ceil(dados.length / tamanhoPagina));
@@ -72,8 +81,12 @@
         $('[name=Pacote]').click(function(){
             if($('[name=Pacote]').is(':checked')) {
                 $('#del-unidade').removeClass('disabled');
+                $('#inativar-campanha').removeClass('disabled');
+                $('#ativar-campanha').removeClass('disabled');
             } else {
                 $('#del-unidade').addClass('disabled');
+                $('#inativar-campanha').addClass('disabled');
+                $('#ativar-campanha').addClass('disabled');
             }
         });
         
@@ -137,7 +150,7 @@
 
 <div class="ui segment">
       <div class="ui grid">
-      <div class="nine wide column">
+      <div class="six wide column">
         <form method="POST" id="form-pesquisa" action="">
             <div class="ui right icon fluid small input">
               <i class="search icon"></i>
@@ -145,7 +158,12 @@
             </div>
         </form>
       </div>
-      <div class="six wide right floated right aligned column">
+      <div class="ten wide right floated right aligned column">
+        <div class="ui small buttons">
+          <button class="ui disabled button" id="inativar-campanha">Inativar campanha</button>
+          <div class="or" data-text="ou"></div>
+          <button class="ui positive disabled button" id="ativar-campanha">Ativar campanha</button>
+        </div>
          <button class="ui labeled icon red disabled small button" id="del-unidade" title="Deletar"><i class="trash alternate icon"></i>Deletar</button>
          <a href="addunidades.php" class="ui labeled icon black small button" title="Adicionar nova unidade"><i class="plus icon"></i>Adicionar</a>
          <div class="ui labeled icon top middle pointing dropdown basic small button">
@@ -248,8 +266,8 @@
                     <th class="">Nome</th>
                     <th class="">Cidade</th>
                     <th class="two wide">Estado</th>
-                    <th class="">Google id</th>
-                    <th class="">Responsável</th>
+                    <th class="two wide">Campanha</th>
+                    <!-- <th class="">Responsável</th> -->
               </tr>
             </thead>
             <tbody>
@@ -260,7 +278,7 @@
             <tfoot class="full-width">
             <tr>
               <th></th>
-              <th colspan="5">
+              <th colspan="4">
                 <div class="ui center floated buttons">
                     <button id="anterior" class="ui black button" disabled>&lsaquo; Anterior</button>
                     <button class="ui basic disabled button"><span id="numeracao"></span></button>
@@ -317,9 +335,52 @@
       // location.reload();
     } 
    } 
+
+   function alterarStatusCampanha(ativar) {
+    var pacote   = document.querySelectorAll('[name=Pacote]:checked');
+    var values   = [];
+    for (var i = 0; i < pacote.length; i++) {
+      // utilize o valor aqui, adicionei ao array para exemplo
+      values.push(pacote[i].value);
+    }
+      ativar == true ? msg = confirm('Deseja ativar a campanha das unidades ' + values + '?') 
+                    : msg = confirm('Deseja desativar a campanha das unidades ' + values + '?');
+
+      if (msg) {
+        $.ajax({
+          url: '../model/ajaxAlterarStatusCampanha.php',
+          type: 'POST',
+          data: {
+            'ids': values,
+            'ativar': ativar
+          },
+          beforeSend: function(){	
+					  $('#loader').css({display:"block"});
+			  	},
+          success: (data) => {
+            setTimeout(() => {
+              location.reload();
+            }, 1500);
+          }
+        })
+      }
+
+
+   }
    
     var del = document.getElementById('del-unidade');
+    var inativa = document.getElementById('inativar-campanha');
+    var ativa = document.getElementById('ativar-campanha');
+
     del.addEventListener('click', delValues, false);
+
+    ativa.addEventListener('click', () => {
+      alterarStatusCampanha(true);
+    });
+
+    inativa.addEventListener('click', () => {
+      alterarStatusCampanha(false);
+    });
 </script>
 
 <script type="text/javascript" src="js/funcoes.js"></script>
@@ -372,9 +433,13 @@ checkTodos.click(function () {
   if ( $(this).is(':checked') ){
     $('input:checkbox').prop("checked", true);
     $('#del-unidade').removeClass('disabled');
+    $('#inativar-campanha').removeClass('disabled');
+    $('#ativar-campanha').removeClass('disabled');
   }else{
     $('input:checkbox').prop("checked", false);
     $('#del-unidade').addClass('disabled');
+    $('#inativar-campanha').addClass('disabled');
+    $('#ativar-campanha').addClass('disabled');
   }
 });
 </script>
