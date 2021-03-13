@@ -9,6 +9,14 @@
     	exit();
   	}
 
+	include('../controller/Lead.php');
+
+	$leadsDuplicados = verificarLeadDuplicado();
+
+	if ($leadsDuplicados) {
+		ajustarBaseLeadDuplicado($leadsDuplicados);
+	}
+
 ?>
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" /> 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
